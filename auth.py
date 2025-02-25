@@ -11,15 +11,15 @@ def login():
         if not username:
             flash('Please enter a username')
             return redirect(url_for('auth.login'))
-        
+
         # Get or create user
         user = User.query.filter_by(username=username).first()
         if not user:
-            user = User(username=username)
+            user = User(username=username, email=f"{username}@example.com")
             db.session.add(user)
             db.session.commit()
-        
+
         login_user(user)
         return redirect(url_for('index'))
-    
+
     return render_template('login.html')
