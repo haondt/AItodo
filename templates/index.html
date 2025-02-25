@@ -9,22 +9,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
 </head>
 <body>
-    <div class="container py-4">
-        <header class="mb-4">
-            <h1 class="display-5 mb-3">AI Todo List Manager</h1>
-            <div class="progress mb-4" style="height: 25px;">
-                <div id="overall-progress" 
-                     class="progress-bar progress-bar-striped progress-bar-animated" 
-                     role="progressbar" 
-                     style="width: 0%">
-                    0%
-                </div>
-            </div>
-        </header>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <!-- Todo List Section -->
+            <div class="col-12 col-lg-8">
+                <header class="mb-4">
+                    <h1 class="display-5 mb-3">AI Todo List Manager</h1>
+                    <div class="progress mb-4" style="height: 25px;">
+                        <div id="overall-progress" 
+                             class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" 
+                             style="width: 0%">
+                            0%
+                        </div>
+                    </div>
+                </header>
 
-        <main>
-            <div class="row">
-                <div class="col-12">
+                <main>
                     <div class="card mb-4">
                         <div class="card-header">
                             <h5 class="card-title mb-0">Tasks</h5>
@@ -35,20 +36,51 @@
                             </div>
                         </div>
                     </div>
-                </div>
+
+                    <div class="input-group mb-3">
+                        <input type="text" 
+                               id="command-input" 
+                               class="form-control" 
+                               placeholder="Type your command (e.g., 'Add a task to buy groceries')"
+                               aria-label="Command input">
+                        <button class="btn btn-primary" type="button" id="send-command">
+                            <i class="bi bi-send"></i> Send
+                        </button>
+                    </div>
+                </main>
             </div>
 
-            <div class="input-group mb-3">
-                <input type="text" 
-                       id="command-input" 
-                       class="form-control" 
-                       placeholder="Type your command (e.g., 'Add a task to buy groceries')"
-                       aria-label="Command input">
-                <button class="btn btn-primary" type="button" id="send-command">
-                    <i class="bi bi-send"></i> Send
-                </button>
+            <!-- AI Chat Section -->
+            <div class="col-12 col-lg-4">
+                <div class="chat-container card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-robot"></i> AI Assistant
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="chat-messages" class="chat-messages">
+                            <div class="ai-message">
+                                Hello! I'm your AI assistant. I can help you manage your tasks.
+                                Try commands like "Add a task to buy groceries" or ask me about your tasks.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="input-group">
+                            <input type="text" 
+                                   id="command-input" 
+                                   class="form-control" 
+                                   placeholder="Type your command or question..."
+                                   aria-label="Command input">
+                            <button class="btn btn-primary" type="button" id="send-command">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
+        </div>
 
         <!-- Toast for notifications -->
         <div class="toast-container position-fixed bottom-0 end-0 p-3">

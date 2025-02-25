@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const taskList = document.getElementById('task-list');
     const overallProgress = document.getElementById('overall-progress');
     const notificationToast = document.getElementById('notification-toast');
+    const chatMessages = document.getElementById('chat-messages');
 
     // Load initial tasks
     loadTasks();
@@ -34,6 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const command = commandInput.value.trim();
         if (!command) return;
 
+        // Add user message to chat
+        addMessage(command, 'user');
+        commandInput.value = '';
+
         try {
             const response = await fetch('/api/tasks', {
                 method: 'POST',
@@ -44,18 +49,25 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             const result = await response.json();
-            
+
             if (result.success) {
                 renderTasks(result.tasks);
                 updateOverallProgress(result.tasks);
-                showNotification(result.message, 'success');
-                commandInput.value = '';
+                addMessage(result.message, 'ai');
             } else {
-                showNotification(result.error, 'danger');
+                addMessage(`I encountered an error: ${result.error}`, 'ai');
             }
         } catch (error) {
-            showNotification('Error processing command', 'danger');
+            addMessage("I'm sorry, I encountered an error processing your request.", 'ai');
         }
+    }
+
+    function addMessage(text, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = type === 'user' ? 'user-message' : 'ai-message';
+        messageDiv.textContent = text;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
     function renderTasks(tasks) {
@@ -90,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const totalProgress = tasks.reduce((sum, task) => sum + task.progress, 0);
         const averageProgress = Math.round(totalProgress / tasks.length);
-        
+
         overallProgress.style.width = `${averageProgress}%`;
         overallProgress.textContent = `${averageProgress}%`;
     }
