@@ -1,13 +1,13 @@
 import os
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from openai import OpenAI
 
 class XAIClient:
     def __init__(self):
         self.client = OpenAI(
             base_url="https://api.x.ai/v1",
-            api_key=os.environ.get("XAI_API_KEY", "default_key")
+            api_key=os.environ.get("XAI_API_KEY")
         )
 
     def process_command(self, command, current_tasks):
@@ -16,14 +16,17 @@ class XAIClient:
             # Prepare the system message with task management instructions
             system_message = """
             You are a task management AI assistant. Process the user's command and return a JSON response.
-            Always include these fields for each task:
+            For each task, include these fields:
             - id (if existing task)
             - title (string)
             - estimated_time (string like "30 minutes" or "2 hours")
-            - due_date (YYYY-MM-DD format, use today's date if not specified)
+            - due_date (YYYY-MM-DD format)
             - progress (number 0-100)
+            - action (optional, set to "delete" for deletion requests)
 
-            Example response format:
+            When a user asks to delete a task, set action="delete" and include the task id.
+
+            Example response format for task creation:
             {
                 "tasks": [{
                     "title": "Buy groceries",
@@ -32,6 +35,15 @@ class XAIClient:
                     "progress": 0
                 }],
                 "message": "Added task to buy groceries"
+            }
+
+            Example response for task deletion:
+            {
+                "tasks": [{
+                    "id": 123,
+                    "action": "delete"
+                }],
+                "message": "Deleted the task"
             }
             """
 
@@ -48,25 +60,23 @@ class XAIClient:
             # Parse and validate the response
             result = json.loads(response.choices[0].message.content)
 
-            # Ensure each task has a valid date
+            # For non-deletion tasks, ensure proper date formatting and defaults
             today = datetime.now().strftime('%Y-%m-%d')
             for task in result.get('tasks', []):
-                if 'due_date' not in task or not task['due_date'] or task['due_date'] == 'Not specified':
-                    task['due_date'] = today
-                try:
-                    # Validate date format
-                    datetime.strptime(task['due_date'], '%Y-%m-%d')
-                except ValueError:
-                    task['due_date'] = today
+                if task.get('action') != 'delete':
+                    if 'due_date' not in task or not task['due_date']:
+                        task['due_date'] = today
+                    try:
+                        datetime.strptime(task['due_date'], '%Y-%m-%d')
+                    except ValueError:
+                        task['due_date'] = today
 
-                # Ensure progress is a number
-                if 'progress' not in task:
-                    task['progress'] = 0
-                task['progress'] = int(task['progress'])
+                    if 'progress' not in task:
+                        task['progress'] = 0
+                    task['progress'] = int(task['progress'])
 
-                # Ensure estimated_time exists
-                if 'estimated_time' not in task or not task['estimated_time']:
-                    task['estimated_time'] = "30 minutes"
+                    if 'estimated_time' not in task or not task['estimated_time']:
+                        task['estimated_time'] = "30 minutes"
 
             return result
 
