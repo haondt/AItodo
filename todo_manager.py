@@ -5,13 +5,14 @@ class TodoManager:
     def get_active_tasks(self, user_id):
         """Return active tasks (not deleted and not completed) sorted by due date"""
         try:
-            tasks = Task.query.filter_by(
-                user_id=user_id,
-                is_deleted=False,
-                progress__lt=100
+            tasks = Task.query.filter(
+                Task.user_id == user_id,
+                Task.is_deleted == False,
+                Task.progress < 100
             ).order_by(Task.due_date.asc()).all()
             return [self._task_to_dict(task) for task in tasks]
-        except Exception:
+        except Exception as e:
+            print(f"Error getting active tasks: {str(e)}")
             return []
 
     def get_all_tasks(self, user_id):
