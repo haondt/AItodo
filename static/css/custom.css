@@ -1,0 +1,38 @@
+.task-card {
+    transition: all 0.3s ease;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.progress {
+    background-color: var(--bs-gray-700);
+}
+
+.task-due-date {
+    font-size: 0.9rem;
+    color: var(--bs-gray-500);
+}
+
+.task-estimated-time {
+    font-size: 0.85rem;
+    color: var(--bs-gray-600);
+}
+
+#command-input {
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+
+#send-command {
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+.completed {
+    opacity: 0.7;
+}
+
+.task-progress {
+    height: 8px;
+}

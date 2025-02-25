@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Todo List Manager</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+</head>
+<body>
+    <div class="container py-4">
+        <header class="mb-4">
+            <h1 class="display-5 mb-3">AI Todo List Manager</h1>
+            <div class="progress mb-4" style="height: 25px;">
+                <div id="overall-progress" 
+                     class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" 
+                     style="width: 0%">
+                    0%
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Tasks</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="task-list" class="list-group">
+                                <!-- Tasks will be dynamically inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mb-3">
+                <input type="text" 
+                       id="command-input" 
+                       class="form-control" 
+                       placeholder="Type your command (e.g., 'Add a task to buy groceries')"
+                       aria-label="Command input">
+                <button class="btn btn-primary" type="button" id="send-command">
+                    <i class="bi bi-send"></i> Send
+                </button>
+            </div>
+        </main>
+
+        <!-- Toast for notifications -->
+        <div class="toast-container position-fixed bottom-0 end-0 p-3">
+            <div id="notification-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Notification</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
