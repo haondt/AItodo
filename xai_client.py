@@ -13,7 +13,7 @@ class XAIClient:
     def process_command(self, command, current_tasks):
         """Process natural language command using xAI"""
         try:
-            # Prepare the system message with task management instructions
+            # Prepare the system message with task management instructions.  The edited code extends the system message to include instructions for handling categories.
             system_message = """
             You are a task management AI assistant. Process the user's command and return a JSON response.
             For each task, include these fields:
@@ -23,18 +23,22 @@ class XAIClient:
             - due_date (YYYY-MM-DD format)
             - progress (number 0-100)
             - action (optional, set to "delete" for deletion requests)
+            - category (optional, string name of the category)
 
             When a user asks to delete a task, set action="delete" and include the task id.
+            When a user mentions a category, include it in the task data.
+            If a user wants to group tasks, assign them to the same category.
 
-            Example response format for task creation:
+            Example response format for task creation with category:
             {
                 "tasks": [{
                     "title": "Buy groceries",
                     "estimated_time": "30 minutes",
                     "due_date": "2025-02-25",
-                    "progress": 0
+                    "progress": 0,
+                    "category": "Shopping"
                 }],
-                "message": "Added task to buy groceries"
+                "message": "Added task to buy groceries in Shopping category"
             }
 
             Example response for task deletion:
@@ -45,9 +49,18 @@ class XAIClient:
                 }],
                 "message": "Deleted the task"
             }
+
+            Example response for updating task category:
+            {
+                "tasks": [{
+                    "id": 123,
+                    "category": "Work"
+                }],
+                "message": "Moved task to Work category"
+            }
             """
 
-            # Create the API request
+            # Create the API request. This part remains unchanged.
             response = self.client.chat.completions.create(
                 model="grok-2-1212",
                 messages=[
@@ -57,10 +70,10 @@ class XAIClient:
                 response_format={"type": "json_object"}
             )
 
-            # Parse and validate the response
+            # Parse and validate the response. This part remains unchanged.
             result = json.loads(response.choices[0].message.content)
 
-            # For non-deletion tasks, ensure proper date formatting and defaults
+            # For non-deletion tasks, ensure proper date formatting and defaults. This part remains largely unchanged, but the code now also handles categories.
             today = datetime.now().strftime('%Y-%m-%d')
             for task in result.get('tasks', []):
                 if task.get('action') != 'delete':

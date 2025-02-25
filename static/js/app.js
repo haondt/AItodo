@@ -137,7 +137,56 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderTasks(tasks) {
-        taskList.innerHTML = tasks.map(task => `
+        // Group tasks by category
+        const tasksByCategory = {};
+        const uncategorizedTasks = [];
+
+        tasks.forEach(task => {
+            if (task.category) {
+                if (!tasksByCategory[task.category.name]) {
+                    tasksByCategory[task.category.name] = {
+                        color: task.category.color,
+                        tasks: []
+                    };
+                }
+                tasksByCategory[task.category.name].tasks.push(task);
+            } else {
+                uncategorizedTasks.push(task);
+            }
+        });
+
+        // Generate HTML for each category
+        let html = '';
+
+        // Render categorized tasks
+        Object.entries(tasksByCategory).forEach(([categoryName, category]) => {
+            html += `
+                <div class="category-group">
+                    <div class="category-header">
+                        <h6 class="category-name" style="background-color: ${category.color}">${categoryName}</h6>
+                    </div>
+                    ${renderTaskList(category.tasks)}
+                </div>
+            `;
+        });
+
+        // Render uncategorized tasks
+        if (uncategorizedTasks.length > 0) {
+            html += `
+                <div class="category-group uncategorized-tasks">
+                    <div class="category-header">
+                        <h6 class="category-name" style="background-color: var(--bs-gray-600)">Uncategorized</h6>
+                    </div>
+                    ${renderTaskList(uncategorizedTasks)}
+                </div>
+            `;
+        }
+
+        taskList.innerHTML = html;
+    }
+
+    function renderTaskList(tasks) {
+        return tasks.map(task => `
             <div class="list-group-item task-card ${task.progress === 100 ? 'completed' : ''}" data-task-id="${task.id}">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5 class="mb-0">${task.title}</h5>

@@ -1,5 +1,37 @@
+/* Task category styles */
+.task-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.category-group {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: var(--bs-gray-800);
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.category-name {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+}
+
+.uncategorized-tasks {
+    opacity: 0.8;
+}
+
 .task-card {
     transition: all 0.3s ease;
+    margin-bottom: 0.5rem;
 }
 
 .task-card:hover {
@@ -31,7 +63,7 @@
 
 /* Chat styles */
 .chat-container {
-    height: 100vh; /* Removed the -2rem as the footer is gone */
+    height: 100vh;
     display: flex;
     flex-direction: column;
 }
