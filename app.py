@@ -7,11 +7,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET")
 
 # configure the database
-is_prod = os.environ.get('REPL_SLUG', None) is not None
-if is_prod:
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("SQLALCHEMY_DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/todo")
-else:
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///instance/todo.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("SQLALCHEMY_DATABASE_URI", "sqlite:///instance/todo.db")
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
