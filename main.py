@@ -28,7 +28,13 @@ def index():
 @login_required
 def get_tasks():
     """Get all active tasks"""
-    return jsonify(todo_manager.get_active_tasks(current_user.id))
+    try:
+        tasks = todo_manager.get_active_tasks(current_user.id)
+        print("Tasks returned from get_active_tasks:", tasks)  # Debug log
+        return jsonify(tasks)
+    except Exception as e:
+        print(f"Error in get_tasks route: {str(e)}")
+        return jsonify([])
 
 @app.route('/api/tasks', methods=['POST'])
 @login_required

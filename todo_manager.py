@@ -5,7 +5,12 @@ class TodoManager:
     def get_active_tasks(self, user_id):
         """Return active tasks (not deleted and not completed) sorted by due date"""
         try:
-            tasks = Task.query.filter(
+            # Join with categories to ensure we get category info
+            tasks = Task.query.join(
+                Category,
+                Task.category_id == Category.id,
+                isouter=True  # Left outer join to include tasks without categories
+            ).filter(
                 Task.user_id == user_id,
                 Task.is_deleted == False,
                 Task.progress < 100
@@ -14,9 +19,12 @@ class TodoManager:
             # Log the tasks for debugging
             print(f"Found {len(tasks)} active tasks")
             for task in tasks:
-                print(f"Task: {task.title}, Category: {task.category.name if task.category else 'None'}")
+                print(f"Task: {task.title}, Due: {task.due_date}, "
+                      f"Category: {task.category.name if task.category else 'None'}")
 
-            return [self._task_to_dict(task) for task in tasks]
+            task_dicts = [self._task_to_dict(task) for task in tasks]
+            print("Converted tasks to dict:", task_dicts)
+            return task_dicts
         except Exception as e:
             print(f"Error getting active tasks: {str(e)}")
             db.session.rollback()
