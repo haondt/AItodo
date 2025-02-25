@@ -2,14 +2,63 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize Bootstrap components
     const toastElList = document.querySelectorAll('.toast');
     const toasts = [...toastElList].map(toastEl => new bootstrap.Toast(toastEl));
+    const voiceModal = new bootstrap.Modal(document.getElementById('voiceModal'));
 
     // DOM elements
     const commandInput = document.getElementById('command-input');
     const sendButton = document.getElementById('send-command');
+    const voiceButton = document.getElementById('voice-input');
+    const voiceRecordButton = document.getElementById('voice-record');
+    const voiceStatus = document.getElementById('voice-status');
+    const voiceTranscript = document.getElementById('voice-transcript');
     const taskList = document.getElementById('task-list');
     const overallProgress = document.getElementById('overall-progress');
     const notificationToast = document.getElementById('notification-toast');
     const chatMessages = document.getElementById('chat-messages');
+
+    // Speech Recognition setup
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = () => {
+            voiceStatus.textContent = 'Listening...';
+            voiceRecordButton.classList.remove('btn-secondary');
+            voiceRecordButton.classList.add('btn-danger');
+        };
+
+        recognition.onend = () => {
+            voiceStatus.textContent = 'Click the microphone to start recording';
+            voiceRecordButton.classList.remove('btn-danger');
+            voiceRecordButton.classList.add('btn-secondary');
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join('');
+            voiceTranscript.textContent = transcript;
+
+            if (event.results[0].isFinal) {
+                commandInput.value = transcript;
+                setTimeout(() => {
+                    voiceModal.hide();
+                    sendCommand();
+                }, 1000);
+            }
+        };
+
+        recognition.onerror = (event) => {
+            voiceStatus.textContent = `Error: ${event.error}`;
+            voiceRecordButton.classList.remove('btn-danger');
+            voiceRecordButton.classList.add('btn-secondary');
+        };
+    }
 
     // Load initial tasks
     loadTasks();
@@ -19,6 +68,23 @@ document.addEventListener('DOMContentLoaded', function() {
     commandInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendCommand();
     });
+
+    if (recognition) {
+        voiceButton.addEventListener('click', () => {
+            voiceModal.show();
+            voiceTranscript.textContent = '';
+        });
+
+        voiceRecordButton.addEventListener('click', () => {
+            if (voiceRecordButton.classList.contains('btn-danger')) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        });
+    } else {
+        voiceButton.style.display = 'none';
+    }
 
     async function loadTasks() {
         try {

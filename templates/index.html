@@ -43,10 +43,14 @@
                                class="form-control" 
                                placeholder="Type your command (e.g., 'Add a task to buy groceries')"
                                aria-label="Command input">
+                        <button class="btn btn-secondary" type="button" id="voice-input" data-bs-toggle="modal" data-bs-target="#voiceModal">
+                            <i class="bi bi-mic"></i>
+                        </button>
                         <button class="btn btn-primary" type="button" id="send-command">
                             <i class="bi bi-send"></i> Send
                         </button>
                     </div>
+                    
                 </main>
             </div>
 
@@ -77,6 +81,25 @@
                                 <i class="bi bi-send"></i>
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voice Recording Modal -->
+        <div class="modal fade" id="voiceModal" tabindex="-1" aria-labelledby="voiceModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="voiceModalLabel">Voice Input</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div id="voice-status" class="mb-3">Click the microphone to start recording</div>
+                        <button class="btn btn-lg btn-secondary mb-3" id="voice-record">
+                            <i class="bi bi-mic"></i>
+                        </button>
+                        <div id="voice-transcript" class="text-muted"></div>
                     </div>
                 </div>
             </div>
