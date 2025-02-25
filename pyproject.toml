@@ -8,4 +8,5 @@ dependencies = [
     "flask>=3.1.0",
     "openai>=1.64.0",
     "flask-login>=0.6.3",
+    "gunicorn>=21.2.0",
 ]
