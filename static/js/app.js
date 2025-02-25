@@ -137,15 +137,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderTasks(tasks) {
+        console.log('Rendering tasks:', tasks); // Debug log
+
+        if (!tasks || !Array.isArray(tasks)) {
+            console.error('Invalid tasks data:', tasks);
+            taskList.innerHTML = '<div class="alert alert-warning">No tasks available</div>';
+            return;
+        }
+
         // Group tasks by category
         const tasksByCategory = {};
         const uncategorizedTasks = [];
 
         tasks.forEach(task => {
-            if (task.category) {
+            console.log('Processing task:', task); // Debug log
+            if (task.category && task.category.name) {
                 if (!tasksByCategory[task.category.name]) {
                     tasksByCategory[task.category.name] = {
-                        color: task.category.color,
+                        color: task.category.color || '#6c757d',
                         tasks: []
                     };
                 }
@@ -182,26 +191,33 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
 
+        // If no tasks at all, show a message
+        if (html === '') {
+            html = '<div class="alert alert-info">No tasks to display</div>';
+        }
+
         taskList.innerHTML = html;
     }
 
     function renderTaskList(tasks) {
         return tasks.map(task => `
-            <div class="list-group-item task-card ${task.progress === 100 ? 'completed' : ''}" data-task-id="${task.id}">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h5 class="mb-0">${task.title}</h5>
-                    <span class="task-due-date">Due: ${task.due_date}</span>
-                </div>
-                <p class="task-estimated-time mb-2">
-                    <i class="bi bi-clock"></i> ${task.estimated_time}
-                </p>
-                <div class="progress task-progress">
-                    <div class="progress-bar" 
-                         role="progressbar" 
-                         style="width: ${task.progress}%" 
-                         aria-valuenow="${task.progress}" 
-                         aria-valuemin="0" 
-                         aria-valuemax="100">
+            <div class="card task-card mb-2 ${task.progress === 100 ? 'completed' : ''}" data-task-id="${task.id}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title mb-0">${task.title}</h5>
+                        <span class="task-due-date">${task.due_date}</span>
+                    </div>
+                    <p class="task-estimated-time mb-2">
+                        <i class="bi bi-clock"></i> ${task.estimated_time}
+                    </p>
+                    <div class="progress task-progress">
+                        <div class="progress-bar" 
+                             role="progressbar" 
+                             style="width: ${task.progress}%" 
+                             aria-valuenow="${task.progress}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
                     </div>
                 </div>
             </div>

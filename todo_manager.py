@@ -10,6 +10,12 @@ class TodoManager:
                 Task.is_deleted == False,
                 Task.progress < 100
             ).order_by(Task.due_date.asc()).all()
+
+            # Log the tasks for debugging
+            print(f"Found {len(tasks)} active tasks")
+            for task in tasks:
+                print(f"Task: {task.title}, Category: {task.category.name if task.category else 'None'}")
+
             return [self._task_to_dict(task) for task in tasks]
         except Exception as e:
             print(f"Error getting active tasks: {str(e)}")
@@ -165,22 +171,30 @@ class TodoManager:
 
     def _task_to_dict(self, task):
         """Convert Task model to dictionary"""
-        return {
-            'id': task.id,
-            'title': task.title,
-            'estimated_time': task.estimated_time,
-            'due_date': task.due_date,
-            'progress': task.progress,
-            'is_deleted': task.is_deleted,
-            'category': self._category_to_dict(task.category) if task.category else None
-        }
+        try:
+            return {
+                'id': task.id,
+                'title': task.title,
+                'estimated_time': task.estimated_time,
+                'due_date': task.due_date,
+                'progress': task.progress,
+                'is_deleted': task.is_deleted,
+                'category': self._category_to_dict(task.category) if task.category else None
+            }
+        except Exception as e:
+            print(f"Error converting task to dict: {str(e)}")
+            return None
 
     def _category_to_dict(self, category):
         """Convert Category model to dictionary"""
         if not category:
             return None
-        return {
-            'id': category.id,
-            'name': category.name,
-            'color': category.color
-        }
+        try:
+            return {
+                'id': category.id,
+                'name': category.name,
+                'color': category.color
+            }
+        except Exception as e:
+            print(f"Error converting category to dict: {str(e)}")
+            return None
