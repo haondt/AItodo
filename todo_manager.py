@@ -5,22 +5,16 @@ class TodoManager:
     def get_active_tasks(self, user_id):
         """Return active tasks (not deleted and not completed) sorted by due date"""
         try:
-            # Join with categories to ensure we get category info
-            tasks = Task.query.join(
-                Category,
-                Task.category_id == Category.id,
-                isouter=True  # Left outer join to include tasks without categories
-            ).filter(
+            # Get tasks without the join first to debug
+            tasks = Task.query.filter(
                 Task.user_id == user_id,
-                Task.is_deleted == False,
-                Task.progress < 100
+                Task.is_deleted == False  # Show only non-deleted tasks
             ).order_by(Task.due_date.asc()).all()
 
             # Log the tasks for debugging
             print(f"Found {len(tasks)} active tasks")
             for task in tasks:
-                print(f"Task: {task.title}, Due: {task.due_date}, "
-                      f"Category: {task.category.name if task.category else 'None'}")
+                print(f"Task: {task.title}, Due: {task.due_date}, Is_deleted: {task.is_deleted}")
 
             task_dicts = [self._task_to_dict(task) for task in tasks]
             print("Converted tasks to dict:", task_dicts)
