@@ -31,7 +31,7 @@
 
 /* Chat styles */
 .chat-container {
-    height: calc(100vh - 2rem);
+    height: 100vh; /* Removed the -2rem as the footer is gone */
     display: flex;
     flex-direction: column;
 }
@@ -65,11 +65,6 @@
     background-color: var(--bs-primary);
     align-self: flex-end;
     border-bottom-right-radius: 0.25rem;
-}
-
-.chat-container .card-footer {
-    padding: 1rem;
-    border-top: 1px solid var(--bs-gray-700);
 }
 
 #command-input {
