@@ -7,20 +7,19 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET")
 
 # configure the database
-if os.environ.get("REPL_SLUG") and os.environ.get("REPL_OWNER"):  # Check if we're in production
-    database_url = os.environ.get("DATABASE_URL")
-    if database_url:
-        # Use connection pooling in production
-        database_url = database_url.replace('.us-east-2', '-pooler.us-east-2')
-        app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+database_url = os.environ.get("SQLALCHEMY_DATABASE_URI")
+if database_url:
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+    # Use connection pooling for PostgreSQL
+    if database_url.startswith('postgresql'):
         app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
             "pool_size": 5,
             "pool_recycle": 300,
             "pool_pre_ping": True,
         }
 else:
-    # Use SQLite for development
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///instance/todo.db"
+    raise ValueError("SQLALCHEMY_DATABASE_URI environment variable is required")
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # initialize the app with the extensions
